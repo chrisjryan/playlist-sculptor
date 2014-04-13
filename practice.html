@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<title>Prototyping the playlist sculptor</title>
+		    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+	        <link type="text/css" href="demo_styles.css" rel="stylesheet" />
+
+	</head>
+	<body>
+
+		<!-- could choose params using a dropdown menu using <select> tag -->
+
+
+<!-- 		 keycode 13 is /enter'? -->
+    <span class='box'> tempo:
+        <input title="tempo" type="text"  size=24 id="tempo" 
+        name="tempo" value='75'/>
+    </span>
+
+    <span class='box'> danceability:
+        <input title="danceability" type="text"  size=24 id="danceability" name="danceability" value='0.5'/>
+    </span>
+
+    <span class='box'> energy:
+        <input title="energy" type="text"  size=24 id="energy" name="energy" value='0.67'/>
+    </span>
+
+    <span class='box'> loudness:
+        <input title="loudness" type="text"  size=24 id="loudness" name="loudness" value='-5.0'/>
+    </span>
+
+    <span class='box'> acousticness:
+        <input title="acousticness" type="text" size=24 id="acousticness" name="acousticness" value='0.2'/>
+    </span>
+
+    <button value="go" id="go" name="go"  disabled onclick="newPlaylist()"> Go </button>
+
+
+
+
+    <div id="info"> </div>
+    <div id="all_results">
+        <div id='tracks'>
+            <h2> The Playlist</h2>
+            <div id="results"> </div>
+        </div>
+    </div>
+
+	</body>
+	<script type="text/javascript">
+
+		// note: you can interchange '$' with 'jQuery' as you like.
+
+		// (I think) this prevents data from being returned as a long string, instead of a structured JSON object (see https://api.jquery.com/jQuery.param )
+		jQuery.ajaxSettings.traditional = true; 
+
+		function fetchArtistPlaylist(artist,  wandering, variety) {
+
+			
+			// var artist='Ice Age'
+			// var wandering = false
+			// var variety = 0.2
+	    	var url = 'http://developer.echonest.com/api/v4/playlist/static?api_key='+key+'&callback=?';
+
+			$.getJSON(url, { 
+				'artist' : artist, 
+				'format' : 'jsonp', 
+				'bucket' : ['id:spotify-WW','tracks'], 
+				'limit' : true, 
+				'results' : 12, 
+				'type' : 'artist-radio',
+				'variety' : variety, 
+				'distribution' : wandering ? 
+				'wandering' : 'focused'}, 
+				function(data){ 
+
+					console.log(data);
+			});
+
+		}
+
+		function newArtist() {
+		    var tempo = $("#tempo").val();
+		    var danceability = $("#danceability").val();
+		    var energy = $("#energy").val();
+		    var loudness = $("#loudness").val();
+		    var acousticness = $("#acousticness").val();
+
+		    fetchPlaylist(tempo, danceability, energy, loudness, acousticness, false, .2);
+		}
+
+
+		$(document).ready(function() {
+		    $("#go").removeAttr("disabled");
+		});
+	</script>
+</html>
