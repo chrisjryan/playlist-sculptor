@@ -8,55 +8,99 @@
 	</head>
 	<body>
 
-		<!-- could choose params using a dropdown menu using <select> tag -->
-
+<!-- instead of text boxes, use sliders like 'Playlist Distribution Demo' -->
 
 <!-- 		 keycode 13 is 'enter'? -->
-    <span class='box'> seed artist:
+<!--     <span class='box'> seed artist:
         <input title="seed artist" type="text"  size=24 id="seed_artist" 
         name="seed_artist" value='Ice Age'/>
     </span> (Eventually try to do this using genre rather than a seed artists)
 
+	<br>
+ -->
+    <div id='seed'>
+          <select id='genre1' class='genre' class="chzn-select" style="width:350px;" tabindex="2">
+            <option value=""></option> 
+          </select>
+    </div>
+
+	<br>
+
+    <div id='seed'>
+          <select id='genre2' class='genre' class="chzn-select" style="width:350px;" tabindex="2">
+            <option value=""></option> 
+          </select>
+    </div>
+
+	<br>
+
+    <div id='seed'>
+          <select id='genre3' class='genre' class="chzn-select" style="width:350px;" tabindex="2">
+            <option value=""></option> 
+          </select>
+    </div>
+
+	<br>
+
+    <div id='seed'>
+          <select id='genre4' class='genre' class="chzn-select" style="width:350px;" tabindex="2">
+            <option value=""></option> 
+          </select>
+    </div>
+
+    <br>
+
+    <div id='seed'>
+      <select id='genre5' class='genre' class="chzn-select" style="width:350px;" tabindex="2">
+        <option value=""></option> 
+      </select>
+    </div>
+
+    <br>
+
+
+
     <br><br>
 
     <span class='box'> tempo (min/max):
-        <input title="min tempo" type="text"  size=24 id="min_tempo" name="min_tempo" value='75'/>
+        <input title="min tempo" type="text"  size=24 id="min_tempo" name="min_tempo" value='0'/>
 
-        <input title="max tempo" type="text"  size=24 id="max_tempo" name="max_tempo" value='90'/>
+        <input title="max tempo" type="text"  size=24 id="max_tempo" name="max_tempo" value='500'/>
     </span>
 
     <br><br>
 
     <span class='box'> danceability (min/max):
-        <input title="min danceability" type="text"  size=24 id="min_danceability" name="min_danceability" value='0.4'/>
-        <input title="max danceability" type="text"  size=24 id="max_danceability" name="max_danceability" value='0.6'/>
+        <input title="min danceability" type="text"  size=24 id="min_danceability" name="min_danceability" value='0.0'/>
+        <input title="max danceability" type="text"  size=24 id="max_danceability" name="max_danceability" value='1.0'/>
     </span>
 
     <br><br>
 
     <span class='box'> energy (min/max):
-        <input title="min energy" type="text"  size=24 id="min_energy" name="min_energy" value='0.57'/>
-        <input title="max energy" type="text"  size=24 id="max_energy" name="max_energy" value='0.8'/>
+        <input title="min energy" type="text"  size=24 id="min_energy" name="min_energy" value='0.0'/>
+        <input title="max energy" type="text"  size=24 id="max_energy" name="max_energy" value='1.0'/>
     </span>
 
     <br><br>
 
     <span class='box'> loudness (min/max):
-        <input title="min loudness" type="text"  size=24 id="min_loudness" name="min_loudness" value='-5.5'/>
-        <input title="max loudness" type="text"  size=24 id="max_loudness" name="max_loudness" value='-4.5'/>
+        <input title="min loudness" type="text"  size=24 id="min_loudness" name="min_loudness" value='-100.0'/>
+        <input title="max loudness" type="text"  size=24 id="max_loudness" name="max_loudness" value='100.0'/>
     </span>
 
     <br><br>
 
     <span class='box'> acousticness (min/max):
-        <input title="min acousticness" type="text" size=24 id="min_acousticness" name="min_acousticness" value='0.4'/>
-        <input title="max acousticness" type="text" size=24 id="max_acousticness" name="max_acousticness" value='0.8'/>
+        <input title="min acousticness" type="text" size=24 id="min_acousticness" name="min_acousticness" value='0.0'/>
+        <input title="max acousticness" type="text" size=24 id="max_acousticness" name="max_acousticness" value='1.0'/>
     </span>
 
     <br><br>
 
     <button value="go" id="go" name="go"  disabled onclick="newPlaylist()"> Go </button>
-
+    
+	<br>
 
 
 
@@ -69,6 +113,8 @@
     </div>
 
 	</body>
+
+
 	<script type="text/javascript">
 
 		// note: you can interchange '$' with 'jQuery' as you like.
@@ -76,17 +122,20 @@
 		// (I think) this prevents data from being returned as a long string, instead of a structured JSON object (see https://api.jquery.com/jQuery.param )
 		jQuery.ajaxSettings.traditional = true; 
 
-		function fetchPlaylist(seed_artist, min_tempo, max_tempo, min_danceability, max_danceability, min_energy, max_energy, min_loudness, max_loudness, min_acousticness, max_acousticness, wandering, variety) {
+		var embed = '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:PREFEREDTITLE:TRACKS" style="width:640px; height:520px;" frameborder="0" allowtransparency="true"></iframe>';
 
-			
-			// var artist='Ice Age'
-			// var wandering = false
-			// var variety = 0.2
+		
+
+		function fetchPlaylist(genre1, genre2, genre3, genre4, min_tempo, max_tempo, min_danceability, max_danceability, min_energy, max_energy, min_loudness, max_loudness, min_acousticness, max_acousticness, wandering, variety) {
+
 	    	var url = 'http://developer.echonest.com/api/v4/playlist/static?api_key='+key+'&callback=?';
 
+		    $("#all_results").hide();
+		    info("Creating the playlist ...");
 
 			$.getJSON(url, { 
-				'artist' : seed_artist, 
+				'genre' : [genre1, genre2, genre3, genre4], 
+				// 'artist' : seed_artist, 
 				'min_tempo' : min_tempo,
 				'max_tempo' : max_tempo,
 				'min_danceability' : min_danceability,
@@ -101,14 +150,39 @@
 				'bucket' : ['id:spotify-WW','tracks'], 
 				'limit' : true, 
 				'results' : 12, 
-				'type' : 'artist-radio',
+				// 'type' : 'artist-radio',
+				'type' : 'genre-radio',
 				'variety' : variety, 
 				'distribution' : wandering ? 
 				'wandering' : 'focused'}, 
 				function(data){ 
 
 					console.log(data);
-			});
+
+			        info("");
+			        $("#results").empty(); // clear out the old playlist
+			        $("#all_results").show();
+
+			        // you can poke around the tree in the console if you just print 'data' to console.log()
+					// initialize tracklist as empty string:
+			        var tracks = ""; 
+			        for (var i = 0; i < data.response.songs.length; i++) {
+						// get song element i from the JSONP object representing the playlist:
+			            var song = data.response.songs[i]; 
+			            // get the Spotify track ID from deeper in the JSON file, also get rid of the junk prepending it there: 
+			            var tid = song.tracks[0].foreign_id.replace('spotify-WW:track:', '');
+			            // add the track id and a comma to the string representing the playlist:
+			            tracks = tracks + tid + ','; 
+			        }
+			        // replace part of the embedded HTML Spotify query above with the new tracks:
+			        var tembed = embed.replace('TRACKS', tracks);
+			        tembed = tembed.replace('PREFEREDTITLE', 'metal' + ' playlist');
+			        // not sure what li is or why it does for us. Seems to hold results of the spotify playlist. $.html() seems to return a jQuery objects associated with that <span>, but it's huge...
+			        var li = $("<span>").html(tembed);
+			        // console.log(tembed)
+			        $("#results").append(li);
+
+				});
 
 
 			// $.getJSON(url, { 
@@ -129,6 +203,11 @@
 		}
 
 		function newPlaylist() {
+		    var genre1 = $("#genre1").val();
+		    var genre2 = $("#genre2").val();
+		    var genre3 = $("#genre3").val();
+		    var genre4 = $("#genre4").val();
+		    var genre5 = $("#genre5").val();
 		    var seed_artist = $("#seed_artist").val();
 		    var min_tempo = $("#min_tempo").val();
 		    var max_tempo = $("#max_tempo").val();
@@ -141,12 +220,45 @@
 		    var min_acousticness = $("#min_acousticness").val();
 		    var max_acousticness = $("#max_acousticness").val();
 
-		    fetchPlaylist(seed_artist, min_tempo, max_tempo, min_danceability, max_danceability, min_energy, max_energy, min_loudness, max_loudness, min_acousticness, max_acousticness, false, .2);
+		    console.log(genre1, genre2, genre3, genre4, genre5)
+
+		    fetchPlaylist(genre1, genre2, genre3, genre4, min_tempo, max_tempo, min_danceability, max_danceability, min_energy, max_energy, min_loudness, max_loudness, min_acousticness, max_acousticness, false, .2);
 		}
+
+
+		function info(txt) {
+		    $("#info").text(txt);
+		}
+
+
+		function fetchGenreList() {
+	    var url = 'http://developer.echonest.com/api/v4/artist/list_genres?api_key=' + key;
+	    $.getJSON(url, { 'format':'json'}, 
+            function(data) {
+                var genres = data.response.genres;
+                var glist = $('.genre');
+                console.log(genres.length)
+                for (var i = 0, max = genres.length; i < max; i++) {
+                    var genre = genres[i].name;
+                    var opt = $("<option>").attr('value', genre).text(genre);
+                    glist.append(opt);
+                }
+                $("#genre1").val('electro')
+                $("#genre2").val('dance-punk')
+                $("#genre3").val('new wave')
+                $("#genre4").val('italian disco')
+                $("#genre5").val('synthpop')
+            });
+		}
+
 
 
 		$(document).ready(function() {
 		    $("#go").removeAttr("disabled");
+	        $("#all_results").hide();
+            fetchGenreList();
+
+
 		});
 	</script>
 </html>
