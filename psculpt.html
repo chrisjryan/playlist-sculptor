@@ -3,6 +3,8 @@
     <head>
 		<title>Prototyping the playlist sculptor</title>
 		    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+		    <script type="text/javascript" src="fetchPlaylist.js"></script>
+		    <script type="text/javascript" src="apiKey.js"></script>
 	        <link type="text/css" href="demo_styles.css" rel="stylesheet" />
 
 	</head>
@@ -50,14 +52,14 @@
 
     <br>
 
-    <div id='seed'>
+<!--     <div id='seed'>
       <select id='genre5' class='genre' class="chzn-select" style="width:350px;" tabindex="2">
         <option value=""></option> 
       </select>
     </div>
 
     <br>
-
+ -->
 
 
     <br><br>
@@ -98,8 +100,8 @@
 
     <br><br>
 
-    <button value="go" id="go" name="go"  disabled onclick="newPlaylist()"> Go </button>
-    
+    <button value="go" id="go" name="go"  disabled onclick="newPlaylist(12)"> Go </button>
+
 	<br>
 
 
@@ -117,123 +119,24 @@
 
 	<script type="text/javascript">
 
-		// note: you can interchange '$' with 'jQuery' as you like.
-
 		// (I think) this prevents data from being returned as a long string, instead of a structured JSON object (see https://api.jquery.com/jQuery.param )
 		jQuery.ajaxSettings.traditional = true; 
 
 		var embed = '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:PREFEREDTITLE:TRACKS" style="width:640px; height:520px;" frameborder="0" allowtransparency="true"></iframe>';
 
-		
-
-		function fetchPlaylist(genre1, genre2, genre3, genre4, min_tempo, max_tempo, min_danceability, max_danceability, min_energy, max_energy, min_loudness, max_loudness, min_acousticness, max_acousticness, wandering, variety) {
-
-	    	var url = 'http://developer.echonest.com/api/v4/playlist/static?api_key='+key+'&callback=?';
-
-		    $("#all_results").hide();
-		    info("Creating the playlist ...");
-
-			$.getJSON(url, { 
-				'genre' : [genre1, genre2, genre3, genre4], 
-				// 'artist' : seed_artist, 
-				'min_tempo' : min_tempo,
-				'max_tempo' : max_tempo,
-				'min_danceability' : min_danceability,
-				'max_danceability' : max_danceability,
-				'min_energy' : min_energy,
-				'max_energy' : max_energy,
-				'min_loudness' : min_loudness,
-				'max_loudness' : max_loudness,
-				'min_acousticness' : min_acousticness,
-				'max_acousticness' : max_acousticness,
-				'format' : 'jsonp', 
-				'bucket' : ['id:spotify-WW','tracks'], 
-				'limit' : true, 
-				'results' : 12, 
-				// 'type' : 'artist-radio',
-				'type' : 'genre-radio',
-				'variety' : variety, 
-				'distribution' : wandering ? 
-				'wandering' : 'focused'}, 
-				function(data){ 
-
-					console.log(data);
-
-			        info("");
-			        $("#results").empty(); // clear out the old playlist
-			        $("#all_results").show();
-
-			        // you can poke around the tree in the console if you just print 'data' to console.log()
-					// initialize tracklist as empty string:
-			        var tracks = ""; 
-			        for (var i = 0; i < data.response.songs.length; i++) {
-						// get song element i from the JSONP object representing the playlist:
-			            var song = data.response.songs[i]; 
-			            // get the Spotify track ID from deeper in the JSON file, also get rid of the junk prepending it there: 
-			            var tid = song.tracks[0].foreign_id.replace('spotify-WW:track:', '');
-			            // add the track id and a comma to the string representing the playlist:
-			            tracks = tracks + tid + ','; 
-			        }
-			        // replace part of the embedded HTML Spotify query above with the new tracks:
-			        var tembed = embed.replace('TRACKS', tracks);
-			        tembed = tembed.replace('PREFEREDTITLE', 'metal' + ' playlist');
-			        // not sure what li is or why it does for us. Seems to hold results of the spotify playlist. $.html() seems to return a jQuery objects associated with that <span>, but it's huge...
-			        var li = $("<span>").html(tembed);
-			        // console.log(tembed)
-			        $("#results").append(li);
-
-				});
 
 
-			// $.getJSON(url, { 
-			// 	'artist' : artist, 
-			// 	'format' : 'jsonp', 
-			// 	'bucket' : ['id:spotify-WW','tracks'], 
-			// 	'limit' : true, 
-			// 	'results' : 12, 
-			// 	'type' : 'artist-radio',
-			// 	'variety' : variety, 
-			// 	'distribution' : wandering ? 
-			// 	'wandering' : 'focused'}, 
-			// 	function(data){ 
 
-			// 		console.log(data);
-			// });
-
-		}
-
-		function newPlaylist() {
-		    var genre1 = $("#genre1").val();
-		    var genre2 = $("#genre2").val();
-		    var genre3 = $("#genre3").val();
-		    var genre4 = $("#genre4").val();
-		    var genre5 = $("#genre5").val();
-		    var seed_artist = $("#seed_artist").val();
-		    var min_tempo = $("#min_tempo").val();
-		    var max_tempo = $("#max_tempo").val();
-		    var min_danceability = $("#min_danceability").val();
-		    var max_danceability = $("#max_danceability").val();
-		    var min_energy = $("#min_energy").val();
-		    var max_energy = $("#max_energy").val();
-		    var min_loudness = $("#min_loudness").val();
-		    var max_loudness = $("#max_loudness").val();
-		    var min_acousticness = $("#min_acousticness").val();
-		    var max_acousticness = $("#max_acousticness").val();
-
-		    console.log(genre1, genre2, genre3, genre4, genre5)
-
-		    fetchPlaylist(genre1, genre2, genre3, genre4, min_tempo, max_tempo, min_danceability, max_danceability, min_energy, max_energy, min_loudness, max_loudness, min_acousticness, max_acousticness, false, .2);
-		}
-
-
+		// CJR: not quite sure what this does:
 		function info(txt) {
 		    $("#info").text(txt);
 		}
 
 
+		// TODO: since the Echo Nest server won't return more than 1000 entries (true in the demos too), get all these separately and then save them in a JSON file so you can load them from there instead of the Echo nest site (see Echo Nest's 'genre a day' demo repo)
 		function fetchGenreList() {
 	    var url = 'http://developer.echonest.com/api/v4/artist/list_genres?api_key=' + key;
-	    $.getJSON(url, { 'format':'json'}, 
+	    $.getJSON(url, { }, 
             function(data) {
                 var genres = data.response.genres;
                 var glist = $('.genre');
@@ -247,18 +150,16 @@
                 $("#genre2").val('dance-punk')
                 $("#genre3").val('new wave')
                 $("#genre4").val('italian disco')
-                $("#genre5").val('synthpop')
+                // $("#genre5").val('synthpop')
             });
 		}
-
 
 
 		$(document).ready(function() {
 		    $("#go").removeAttr("disabled");
 	        $("#all_results").hide();
             fetchGenreList();
-
-
 		});
+
 	</script>
 </html>
