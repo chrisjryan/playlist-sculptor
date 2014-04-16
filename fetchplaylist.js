@@ -1,54 +1,37 @@
-function fetchPlaylist(numSongs, genre1, genre2, genre3, genre4, min_tempo, max_tempo, min_danceability, max_danceability, min_energy, max_energy, min_loudness, max_loudness, min_acousticness, max_acousticness, wandering, variety) {
+function fetchPlaylist(numSongs, params) {
 
 	var url = 'http://developer.echonest.com/api/v4/playlist/static?api_key='+key+'&callback=?';
 
     $("#all_results").hide();
     info("Creating the playlist ...");
 
-    params = { 
-		'genre' : [genre1, genre2, genre3, genre4], 
-		'min_tempo' : min_tempo,
-		'max_tempo' : max_tempo,
-		'min_danceability' : min_danceability,
-		'max_danceability' : max_danceability,
-		'min_energy' : min_energy,
-		'max_energy' : max_energy,
-		'min_loudness' : min_loudness,
-		'max_loudness' : max_loudness,
-		'min_acousticness' : min_acousticness,
-		'max_acousticness' : max_acousticness,
-		'format' : 'jsonp', 
-		'bucket' : ['id:spotify-WW','tracks'], 
-		'limit' : true, 
-		'results' : 1, 
-		'type' : 'genre-radio',
-		'variety' : variety, 
-		'distribution' : wandering ? 
-		'wandering' : 'focused'
-	}
-
     info("");
     $("#all_results").show();
     $("#results").empty(); // clear out the old playlist
 
+
+
+
 	var data = []
 	var tracklist = ""
 
-	var download = function(d) {
+	// assemble the tracklist using a recursion of callback functions:
+	function download(d) {
 	    data.push(d)
-	    console.log('.')
+
 	    if (data.length < numSongs) {
 			$.getJSON(url, params, download);
-	    } else if (data.length === numSongs) {
-		    console.log(data)
+		    $("#playlist").append('.')
+	    } 
 
-		    // make the comma separated list of track ids as a long string:
+	    else if (data.length === numSongs) {
 		    for (var s=0; s<numSongs; s++) {				    	
 	            var song = data[s].response.songs[0]; 
 	            var tid = song.tracks[0].foreign_id.replace('spotify-WW:track:', '');
 	            tracklist = tracklist + tid + ',';
 		    }
 
+		    $("#playlist").html('The playlist')
 	        var tembed = embed.replace('TRACKS', tracklist);
 	        tembed = tembed.replace('PREFEREDTITLE', ' playlist');
 	        var li = $("<span>").html(tembed);
@@ -61,27 +44,59 @@ function fetchPlaylist(numSongs, genre1, genre2, genre3, genre4, min_tempo, max_
 
 
 function newPlaylist(numSongs) {
-	// evntually you'll be fetching lists of params, not single params
-    var genre1 = $("#genre1").val();
-    var genre2 = $("#genre2").val();
-    var genre3 = $("#genre3").val();
-    var genre4 = $("#genre4").val();
-    // var genre5 = $("#genre5").val();
-    var seed_artist = $("#seed_artist").val();
-    var min_tempo = $("#min_tempo").val();
-    var max_tempo = $("#max_tempo").val();
-    var min_danceability = $("#min_danceability").val();
-    var max_danceability = $("#max_danceability").val();
-    var min_energy = $("#min_energy").val();
-    var max_energy = $("#max_energy").val();
-    var min_loudness = $("#min_loudness").val();
-    var max_loudness = $("#max_loudness").val();
-    var min_acousticness = $("#min_acousticness").val();
-    var max_acousticness = $("#max_acousticness").val();
 
-    $().html('Building playlist')
+    $("#playlist").html('Building playlist')
 
-    fetchPlaylist(numSongs, genre1, genre2, genre3, genre4, min_tempo, max_tempo, min_danceability, max_danceability, min_energy, max_energy, min_loudness, max_loudness, min_acousticness, max_acousticness, false, .2);
+    params = { 
+		'genre' : [$("#genre1").val(), $("#genre2").val(), $("#genre3").val(), $("#genre4").val()], 
+		'min_tempo' : $("#min_tempo").val(),
+		'max_tempo' : $("#max_tempo").val(),
+		'min_danceability' : $("#min_danceability").val(),
+		'max_danceability' : $("#max_danceability").val(),
+		'min_energy' : $("#min_energy").val(),
+		'max_energy' : $("#max_energy").val(),
+		'min_loudness' : $("#min_loudness").val(),
+		'max_loudness' : $("#max_loudness").val(),
+		'min_acousticness' : $("#min_acousticness").val(),
+		'max_acousticness' : $("#max_acousticness").val(),
+		'format' : 'jsonp', 
+		'bucket' : ['id:spotify-WW','tracks'], 
+		'limit' : true, 
+		'results' : 1, 
+		'type' : 'genre-radio',
+		'variety' : 0.2, 
+		'distribution' : false ? 
+		'wandering' : 'focused'
+	}
 
-    $().html('The playlist')
+    fetchPlaylist(numSongs, params);
+}
+
+
+// CJR: not quite sure what this does:
+function info(txt) {
+    $("#info").text(txt);
+}
+
+
+// TODO: since the Echo Nest server won't return more than 1000 entries (true in the demos too), get all these separately and then save them in a JSON file so you can load them from there instead of the Echo nest site (see Echo Nest's 'genre a day' demo repo)
+function fetchGenreList() {
+	var url = 'http://developer.echonest.com/api/v4/artist/list_genres?api_key=' + key;
+	$.getJSON(url, { }, 
+	    function(data) {
+	        var genres = data.response.genres;
+	        var glist = $('.genre');
+	        console.log(genres.length)
+	        for (var i = 0, max = genres.length; i < max; i++) {
+	            var genre = genres[i].name;
+	            var opt = $("<option>").attr('value', genre).text(genre);
+	            glist.append(opt);
+	        }
+	        $("#genre1").val('electro')
+	        $("#genre2").val('dance-punk')
+	        $("#genre3").val('new wave')
+	        $("#genre4").val('italian disco')
+	        // $("#genre5").val('synthpop')
+	    }
+    );
 }
