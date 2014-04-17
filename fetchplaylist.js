@@ -10,36 +10,53 @@ function fetchPlaylist(numSongs, params) {
     $("#results").empty(); // clear out the old playlist
 
 
+	var batcher = function(jobs, params, allDoneCallback) {
+		var jobResults = [];
+		var singleJobDoneCallback = function(jobResult) {
+			// the jobResult, in our case, is the songId + the order in the tracklist
+			jobResults.push(jobResult);
 
+			// this works because 1 job is guaranteed to be the last job to finish (even though it won't be the last job to be submitted), and so will enter this clause:
+			if (jobResults.length === jobs.length) {
+				allDoneCallback(jobResults);
+			}
+		};
 
-	var data = []
-	var tracklist = ""
+		for (var i = 0; i < jobs.length; i++) {
+			jobs[i](params, singleJobDoneCallback);
+		}
+	};
 
-	// assemble the tracklist using a recursion of callback functions:
-	function download(d) {
-	    data.push(d)
+	// this is a little tricky; the singleJobDoneCallback below is not necessarily the same as the one above. The one below only lives in the namespace within that function.
+	var getRandoSong = function(params, singleJobDoneCallback) {
+		$.getJSON(url, params, function(json){
+			singleJobDoneCallback(json);
+		});
+	};
 
-	    if (data.length < numSongs) {
-			$.getJSON(url, params, download);
-		    $("#playlist").append('.')
-	    } 
-
-	    else if (data.length === numSongs) {
-		    for (var s=0; s<numSongs; s++) {				    	
-	            var song = data[s].response.songs[0]; 
-	            var tid = song.tracks[0].foreign_id.replace('spotify-WW:track:', '');
-	            tracklist = tracklist + tid + ',';
-		    }
-
-		    $("#playlist").html('The playlist')
-	        var tembed = embed.replace('TRACKS', tracklist);
-	        tembed = tembed.replace('PREFEREDTITLE', ' playlist');
-	        var li = $("<span>").html(tembed);
-	        $("#results").append(li);
-	    }
+	var jobs = [];
+	for (var i = 0; i < 12; i++) {
+		jobs.push(getRandoSong); 
 	}
 
-	$.getJSON(url, params, download);
+
+    batcher(jobs, params, function(jobResults) {
+
+		var tracklist = "";
+	    for (var s=0; s<numSongs; s++) {				    	
+            var song = jobResults[s].response.songs[0]; 
+            var tid = song.tracks[0].foreign_id.replace('spotify-WW:track:', '');
+            tracklist = tracklist + tid + ',';
+	    }
+
+	    $("#playlist").html('The playlist')
+        var tembed = embed.replace('TRACKS', tracklist);
+        tembed = tembed.replace('PREFEREDTITLE', ' playlist');
+        var li = $("<span>").html(tembed);
+        $("#results").append(li);
+	})
+
+
 }
 
 
