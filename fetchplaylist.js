@@ -12,9 +12,9 @@ function fetchPlaylist(numSongs, params) {
 
 	var batcher = function(jobs, params, allDoneCallback) {
 		var jobResults = [];
-		var singleJobDoneCallback = function(jobResult) {
+		var singleJobDoneCallback = function(i, jobResult) {
 			// the jobResult, in our case, is the songId + the order in the tracklist
-			jobResults.push(jobResult);
+			jobResults.push([i, jobResult]);
 
 			// this works because 1 job is guaranteed to be the last job to finish (even though it won't be the last job to be submitted), and so will enter this clause:
 			if (jobResults.length === jobs.length) {
@@ -22,15 +22,16 @@ function fetchPlaylist(numSongs, params) {
 			}
 		};
 
+		// send in the loop index as the desired track order here:
 		for (var i = 0; i < jobs.length; i++) {
-			jobs[i](params, singleJobDoneCallback);
+			jobs[i](i, params, singleJobDoneCallback);
 		}
 	};
 
-	// this is a little tricky; the singleJobDoneCallback below is not necessarily the same as the one above. The one below only lives in the namespace within that function.
-	var getRandoSong = function(params, singleJobDoneCallback) {
+	// this is a little tricky; the singleJobDoneCallback below is not necessarily the same as the one above. The one below only lives in the namespace within that function. Then again that is true for the first argument too and I think I prefer that style.
+	var getRandoSong = function(i, params, singleJobDoneCallback) {
 		$.getJSON(url, params, function(json){
-			singleJobDoneCallback(json);
+			singleJobDoneCallback(i, json);
 		});
 	};
 
@@ -42,9 +43,12 @@ function fetchPlaylist(numSongs, params) {
 
     batcher(jobs, params, function(jobResults) {
 
+    	jobResults.sort(function(a,b){return a[0]-b[0]});
 		var tracklist = "";
-	    for (var s=0; s<numSongs; s++) {				    	
-            var song = jobResults[s].response.songs[0]; 
+
+	    for (var s=0; s<numSongs; s++) {	
+	    	console.log(jobResults[s][0])			    	
+            var song = jobResults[s][1].response.songs[0]; 
             var tid = song.tracks[0].foreign_id.replace('spotify-WW:track:', '');
             tracklist = tracklist + tid + ',';
 	    }
@@ -54,9 +58,7 @@ function fetchPlaylist(numSongs, params) {
         tembed = tembed.replace('PREFEREDTITLE', ' playlist');
         var li = $("<span>").html(tembed);
         $("#results").append(li);
-	})
-
-
+	});
 }
 
 
