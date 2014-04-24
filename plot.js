@@ -4,7 +4,8 @@ var chart = new Highcharts.Chart({
         renderTo: 'container', // where it goes in the HTML file
         animation: false, // if true, this puts an awkward lag on all chart interactions
         zoomType: 'x', // the axis in which users can drag and zoom
-        alignTicks: false
+        alignTicks: false,
+        type:'spline'
     },
 
     xAxis: {

@@ -15,3 +15,7 @@ To do:
 * Allow for specification of different parameter sets per song (as opposed to 1 set for the whole batch).
 * Create interactive plots using, e.g., Highcharts.js or D3.js for user specified parameter selections.
 * Add more features to constrain song selections (loudness, liveliness, speechiness, etc).
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/christopherjamesryan/Playlist-Sculptor/master/example_imge.png"  width=500/>
+</p>
