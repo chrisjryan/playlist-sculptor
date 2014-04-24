@@ -10,6 +10,8 @@ Features:
 
 To do:
 
+* refactor/clean up the code
+* Find good parameter ranges for users to select from. At this point, API calls sometimes return 0 songs given a parameter set, and the method later throws an exception and prevents playlist building.
 * Allow for specification of different parameter sets per song (as opposed to 1 set for the whole batch).
 * Create interactive plots using, e.g., Highcharts.js or D3.js for user specified parameter selections.
 * Add more features to constrain song selections (loudness, liveliness, speechiness, etc).

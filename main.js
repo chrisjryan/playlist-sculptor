@@ -7,4 +7,6 @@ $(document).ready(function() {
     $("#go").removeAttr("disabled");
     $("#all_results").hide();
     fetchGenreList();
+
+    initializeChart(12); // TODO: this track number must be hardwired to the 12 in the HTML, fix this
 });

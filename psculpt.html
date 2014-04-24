@@ -5,6 +5,8 @@
 			<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
 			<script type="text/javascript" src="fetchPlaylist.js"></script>
 			<script type="text/javascript" src="apiKey.js"></script>
+			<script src="http://code.highcharts.com/highcharts.js"></script>
+			<script src="https://rawgithub.com/highslide-software/draggable-points/master/draggable-points.js"></script>
 			<link type="text/css" href="demo_styles.css" rel="stylesheet" />
 
 	</head>
@@ -52,41 +54,36 @@
 	<br>
  -->
 
+<!-- Eventually, look at typical values of these parameters per genre so you can provide good starting points (i.e., default values) for the user -->
 
 	<br><br>
 
-	<span class='box'> tempo (min/max):
-		<input title="min tempo" type="text"  size=24 id="min_tempo" name="min_tempo" value='0'/>
-
-		<input title="max tempo" type="text"  size=24 id="max_tempo" name="max_tempo" value='500'/>
+	<span class='box'> tempo :
+		<input title="tempo" type="number"  size=24 id="tempo" name="tempo" value='120'/>
 	</span>
 
 	<br><br>
 
-	<span class='box'> danceability (min/max):
-		<input title="min danceability" type="text"  size=24 id="min_danceability" name="min_danceability" value='0.0'/>
-		<input title="max danceability" type="text"  size=24 id="max_danceability" name="max_danceability" value='1.0'/>
+	<span class='box'> danceability :
+		<input title="danceability" type="number"  size=24 id="danceability" name="danceability" value='0.6'/>
 	</span>
 
 	<br><br>
 
-	<span class='box'> energy (min/max):
-		<input title="min energy" type="text"  size=24 id="min_energy" name="min_energy" value='0.0'/>
-		<input title="max energy" type="text"  size=24 id="max_energy" name="max_energy" value='1.0'/>
+	<span class='box'> energy :
+		<input title="energy" type="number"  size=24 id="energy" name="energy" value='0.7'/>
 	</span>
 
 	<br><br>
 
-	<span class='box'> loudness (min/max):
-		<input title="min loudness" type="text"  size=24 id="min_loudness" name="min_loudness" value='-100.0'/>
-		<input title="max loudness" type="text"  size=24 id="max_loudness" name="max_loudness" value='100.0'/>
+	<span class='box'> loudness :
+		<input title="loudness" type="number"  size=24 id="loudness" name="loudness" value='-10.0'/>
 	</span>
 
 	<br><br>
 
-	<span class='box'> acousticness (min/max):
-		<input title="min acousticness" type="text" size=24 id="min_acousticness" name="min_acousticness" value='0.0'/>
-		<input title="max acousticness" type="text" size=24 id="max_acousticness" name="max_acousticness" value='1.0'/>
+	<span class='box'> acousticness :
+		<input title="acousticness" type="number" size=24 id="acousticness" name="acousticness" value='0.4'/>
 	</span>
 
 	<br><br>
@@ -96,6 +93,11 @@
 	<br>
 
 
+	<script type="text/javascript" src="main.js"> </script>
+
+	<div id="container" style="height: 300px"></div>
+
+	<script type="text/javascript" src="plot.js"> </script>
 
 	<div id="info"> </div>
 	<div id="all_results">
@@ -105,7 +107,6 @@
 		</div>
 	</div>
 
-	<script type="text/javascript" src="main.js"> </script>
 
 	</body>
 </html>
